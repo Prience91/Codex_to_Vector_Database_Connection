@@ -20,6 +20,8 @@ flowchart LR
 
 The company operator supplies a reachable server address and authorized Linux SSH credentials and keeps the existing MCP service running. An ordinary SSH login does not itself forward the MCP port.
 
+Before starting, confirm the operator says the retrieval service is available. A researcher needs Codex, an OpenSSH client, access to the company network and the company SSH credentials. No vector-index download, model download or server installation is needed on the researcher's PC. If the repository is private, obtain repository access or the two starter documents from the operator.
+
 1. Download this repository. Copy **`workspace-template/AGENTS.md`** and **`workspace-template/MCP_instruction.md`** into your local writing folder.
 2. Create a local Codex project with that writing folder as **primary**. Attaching the server's shared folder is optional; research uses MCP.
 3. Open a chat in that project and ask:
@@ -39,6 +41,12 @@ Keep the tunnel window open. Add the settings from [client/config.example.toml](
 
 After the tunnel opens, [client/Test-GiisMcp.ps1](client/Test-GiisMcp.ps1) verifies the MCP handshake and three expected tools. `-Query` also tests live preliminary retrieval. It does not certify semantic answer completeness.
 
+## First-use and reconnection check
+
+For a teammate onboarding test, close only **your PC's tunnel and Codex**, then follow the steps above. Leave the operator's server service running. Closing a foreground service terminal stops retrieval for everyone; restoring it is an operator task.
+
+If you see a connection failure, follow [the recovery guide](docs/RECOVERY.md). It separates company SSH login, server port 8765 and the PC tunnel on port 18765. After reconnecting, use the existing Codex configuration rather than adding it again. The optional [window launcher](client/Open-GiisTunnel.ps1) opens a visible terminal for private password entry; it is not an automatic password login.
+
 ## For the server operator
 
 The deployed service needs a compatible, already-built index package and Granite query embedding model. Researchers do **not** run installation scripts on the company server.
@@ -50,7 +58,7 @@ bash /path/to/GIIS_RAG/server/bootstrap.sh
 bash /path/to/GIIS_RAG/server/start.sh
 ```
 
-The service listens on **127.0.0.1:8765/mcp**. SSH carries the connection to each researcher's own localhost port **18765**. This release has no OAuth service or unauthenticated LAN listener. It runs one retrieval process with serialized model work. Client setup does not authorize server changes.
+The service listens on **127.0.0.1:8765/mcp**. SSH carries the connection to each researcher's own localhost port **18765**. This release has no OAuth service or unauthenticated LAN listener. It runs one retrieval process with serialized model work. Client setup does not authorize server changes. An operator may opt into `server/start-detached.sh` to survive SSH logout with a folder-contained tmux socket. See [connection recovery](docs/RECOVERY.md) before switching a running foreground instance.
 
 ## Research protocol
 
@@ -75,7 +83,7 @@ See [validation record](docs/VALIDATION.md). Repository tests use small syntheti
 python -B -m unittest discover -s tests -v
 ```
 
-The 6,144-token evidence allowance uses a disclosed `o200k_base` estimate, not the exact tokenizer for every Codex model. The keyword DB is opened read-only; Chroma may write local bookkeeping. The server supplies candidate mappings, not a semantic approval gate. Persistent service supervision and broader multi-user load testing remain operator work.
+The 6,144-token evidence allowance uses a disclosed `o200k_base` estimate, not the exact tokenizer for every Codex model. The keyword DB is opened read-only; Chroma may write local bookkeeping. The server supplies candidate mappings, not a semantic approval gate. Reboot/crash supervision and broader multi-user load testing remain operator work.
 
 ## Files to reuse
 
@@ -84,10 +92,12 @@ The 6,144-token evidence allowance uses a disclosed `o200k_base` estimate, not t
 | `workspace-template/AGENTS.md` | Portable research, local writing, Obsidian and APA policy |
 | `workspace-template/MCP_instruction.md` | Explicitly invoked client setup manual for Codex |
 | `client/Connect-GiisRag.ps1` | Interactive SSH tunnel helper; no password storage |
+| `client/Open-GiisTunnel.ps1` | Open a dedicated visible tunnel window for private password entry |
 | `client/Configure-Codex.ps1` | Register the URL with an existing Codex CLI, preserving configuration |
 | `client/Test-GiisMcp.ps1` | Live protocol/tool/retrieval checks |
 | `client/config.example.toml` | Mergeable Codex MCP settings |
 | `server/` | Folder-contained Python retriever and loopback MCP service |
+| `server/start-detached.sh` and `server/status.sh` | Opt-in tmux operation and read-only server status |
 | `docs/` | Protocol, existing-index contract, deployment and validation |
 
 Connection reference: [Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli). Transport reference: [MCP Python SDK v1](https://github.com/modelcontextprotocol/python-sdk/tree/v1.x). SSH reference: [OpenSSH manual](https://man.openbsd.org/ssh).

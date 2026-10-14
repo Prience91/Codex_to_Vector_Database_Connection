@@ -16,7 +16,7 @@ The scripts place Python environment, model/cache state, temp files, bytecode, l
 
 Run `bash /path/to/GIIS_RAG/server/start.sh` only after the smoke test succeeds. It starts one foreground MCP service on server localhost8765 and redirects output to `logs/service.log`. `flock` prevents duplicate instances started with this script. Model work is serialized within the process; do not launch additional workers over the same embedded index to bypass this limit.
 
-The service remains alive only while its process remains alive. This release does not register a system service or automatically create a tmux session. Persistent operation must be chosen and approved by the operator. If tmux is later used under folder-only restrictions, its socket must also be placed inside that folder.
+The foreground service remains alive only while its process remains alive. An authorized operator may opt into `server/start-detached.sh`, which uses the dedicated `run/tmux.sock` and `giis-rag` session and survives SSH logout. It refuses to interrupt a running locked instance. It does not register a system service, survive reboot or restart crashes. See [recovery instructions](RECOVERY.md) before switching an existing foreground service.
 
 ## Network boundary
 

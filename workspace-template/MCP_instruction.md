@@ -34,6 +34,8 @@ ssh -N -L 127.0.0.1:18765:127.0.0.1:8765 -o ExitOnForwardFailure=yes -o ServerAl
 
 The user enters the company password at the SSH password prompt and leaves the window open. Blank output after authentication is normal. Do not request the password in chat, write it to a file, place it in command arguments, or store it in Codex configuration. If SSH asks about a previously unknown host key, have the user confirm its fingerprint with the administrator; do not disable host-key verification.
 
+If the repository's `client/Open-GiisTunnel.ps1` is available, it can open that interactive window using the administrator-supplied host and username. It does not store passwords or establish success merely by opening a window. Run `client/Test-GiisMcp.ps1` afterward. If connectivity fails, follow `docs/RECOVERY.md`: verify the server service separately from the PC tunnel. Server startup belongs to the authorized operator, not the research client. The operator may use a folder-contained detached tmux service; this is not installed by client onboarding.
+
 If the user already has an approved SSH key/agent and Codex has permission to launch processes, Codex may establish the tunnel without another password interaction. Verify authentication and forwarding success; do not silently create SSH keys or modify authorized keys. Prefer the user's foreground terminal for the initial setup. Any background helper must have an explicit lifecycle and no visible window unless the user requested one.
 
 If forwarding is prohibited or server-local port `8765` is unavailable, report the specific failure and refer server-side changes to the administrator. A folder-only onboarding request does not authorize restarting the company service.
