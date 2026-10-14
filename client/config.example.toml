@@ -1,0 +1,14 @@
+# Merge into the actual user's Codex config; do not replace unrelated settings.
+[mcp_servers.giis_rag]
+url = "http://127.0.0.1:18765/mcp"
+startup_timeout_sec = 60
+tool_timeout_sec = 180
+enabled_tools = ["search_evidence", "retrieve_obligations", "fetch_passage"]
+enabled = true
+required = false
+
+[mcp_servers.giis_rag.tools.search_evidence]
+output_token_limit = 10000
+
+[mcp_servers.giis_rag.tools.retrieve_obligations]
+output_token_limit = 10000

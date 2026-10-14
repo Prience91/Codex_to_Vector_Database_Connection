@@ -1,0 +1,20 @@
+name: Source checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -B -m unittest discover -s tests -v
+      - run: bash -n server/bootstrap.sh server/start.sh server/runtime.env.sh
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          Get-ChildItem client/*.ps1 | ForEach-Object {
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$parseErrors)
+            if ($parseErrors) { throw ($parseErrors | Out-String) }
+          }
