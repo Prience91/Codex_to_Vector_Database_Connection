@@ -23,6 +23,10 @@ These tests establish basic usability of that existing deployed connection. They
 
 ## Repository checks
 
+### Semantic handoff contract: 15 October 2026
+
+The packet contract now labels unassessed evidence `pending_client_validation`, identifies `codex_client` as the reviewer, and states that server semantic validation has not been performed. The client must record final obligation support/gaps and refuse substantive research answers if MCP access cannot be established. Synthetic tests cover these fields in obligation packets, preliminary searches and empty-result bundles. These tests verify the handoff and instruction contract, not the semantic correctness or compliance of an external Codex model. Deployment requires an operator restart and a new live packet check; source-file installation alone does not prove the running process uses the new contract.
+
 ### Connection recovery: 14 October 2026
 
 Company SSH login succeeded while server port 8765 had no listener and a local HTTP check returned 000. The operator restarted the existing foreground service, then opened the PC tunnel separately. The repository's `client/Test-GiisMcp.ps1` completed MCP initialization, discovered all three GIIS tools and returned nine passages for the biodiversity smoke query with `state=basic_retrieval_passed`. This validates the actual helper against the restored service, not only its syntax.

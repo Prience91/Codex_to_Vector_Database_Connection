@@ -95,10 +95,32 @@ class PacketTests(unittest.TestCase):
 
     def test_ranked_candidate_is_not_semantic_approval(self):
         p = self.engine().retrieve('question', ['obligation'])
-        self.assertEqual(p['obligations'][0]['status'], 'validation_unavailable')
+        self.assertEqual(p['obligations'][0]['status'], 'pending_client_validation')
+        self.assertEqual(p['obligations'][0]['obligation_index'], 1)
+        self.assertEqual(p['semantic_validation_owner'], 'codex_client')
+        self.assertEqual(p['semantic_validation_status'], 'pending_client_validation')
+        self.assertFalse(p['semantic_validation_performed'])
+        self.assertTrue(p['coverage_record_required'])
+        self.assertEqual(p['answer_policy'], 'mcp_evidence_only')
+        self.assertEqual(p['connection_policy'], 'refuse_substantive_answer_if_mcp_unavailable')
         self.assertTrue(p['semantic_validation_required'])
         self.assertFalse(p['decoder_exact_token_count'])
         self.assertEqual(p['obligations'][0]['candidate_evidence_ids'], ['E1'])
+
+    def test_empty_search_does_not_claim_semantic_failure_or_approval(self):
+        engine = self.engine()
+        engine.rank = lambda question, multiplier=1: []
+        p = engine.retrieve('question', ['obligation'])
+        self.assertEqual(p['evidence'], [])
+        self.assertEqual(p['obligations'][0]['candidate_evidence_ids'], [])
+        self.assertEqual(p['semantic_validation_status'], 'pending_client_validation')
+        self.assertFalse(p['semantic_validation_performed'])
+
+    def test_preliminary_search_hands_off_review_explicitly(self):
+        p = self.engine().retrieve('question')
+        self.assertEqual(p['planning_status'], 'preliminary_search')
+        self.assertEqual(p['semantic_validation_owner'], 'codex_client')
+        self.assertFalse(p['semantic_validation_performed'])
 
     def test_rescue_uses_double_depth_once(self):
         engine = self.engine()
@@ -142,6 +164,16 @@ class SourceAndConfigTests(unittest.TestCase):
         self.assertEqual(c['mcp_servers']['giis_rag']['url'], 'http://127.0.0.1:18765/mcp')
         self.assertTrue(CFG['enable_obligation_aware_retrieval'])
         self.assertEqual((CFG['final_chunks'],CFG['maximum_context_tokens']), (12,6144))
+
+    def test_mcp_initialization_explains_reviewer_and_outage_gate(self):
+        tree = ast.parse((ROOT/'server/mcp_server.py').read_text())
+        call = next(n for n in ast.walk(tree) if isinstance(n, ast.Call)
+                    and isinstance(n.func, ast.Name) and n.func.id == 'FastMCP')
+        instructions = ast.literal_eval(next(k.value for k in call.keywords if k.arg == 'instructions'))
+        self.assertIn('Codex model is responsible', instructions)
+        self.assertIn('refuse the substantive answer', instructions)
+        self.assertIn('pending_client_validation', instructions)
+        self.assertIn('structured coverage record', instructions)
 
 if __name__ == '__main__':
     unittest.main()

@@ -23,9 +23,19 @@ No dense result above the similarity threshold means no qualifying retrieval bun
 
 ## Coverage and completion are separate
 
-Evidence statuses are `covered`, `uncovered`, `planner_fallback`, and `validation_unavailable`. The server uses `validation_unavailable` because it does not judge semantic sufficiency. This is a handoff to the client, not a server error.
+Every server packet declares `semantic_validation_owner=codex_client`, `semantic_validation_status=pending_client_validation`, and `semantic_validation_performed=false`. Each obligation starts as `pending_client_validation`. The server has not attempted semantic review. Codex must perform it.
+
+The client's evidence decisions are `covered` or `uncovered`; use `planner_fallback` for failed atomic planning and `validation_unavailable` only when client semantic assessment cannot be performed. Record the actual client outcome separately without rewriting the frozen raw packet. Known legacy packets used `validation_unavailable` for the initial handoff and still require client review.
 
 Answer statuses are `answered`, `limitation_reported`, `omitted`, and `unsupported_answer`. Every obligation must be answered from mapped evidence or have its limitation stated. One bounded draft correction is allowed. Do not release an unqualified claim of completeness while omissions or unsupported answers remain.
+
+Before releasing a substantive answer, Codex must produce a structured record with packet/corpus ID, every obligation, exact E/chunk IDs, covered/uncovered decision, brief support justification, gaps and final answer status. A general assertion of checking is insufficient. No obligation may remain pending. Use a compact table for chat or a linked evidence file for saved reports; see the [synthetic example](../examples/coverage-record.example.json).
+
+## MCP-only connection gate
+
+The policy is `mcp_evidence_only`: successful live retrieval for the current question is mandatory. If MCP cannot connect or required evidence access fails due to transport/service outage, Codex must refuse the substantive answer and report the connection limitation. Do not substitute remembered knowledge, cached reports, prior chat passages, web search, uploaded files or direct data scans. Troubleshooting and formatting-only edits adding no claims remain allowed.
+
+A reachable service with no qualifying evidence is a different evidence limitation; disclose it and decline unsupported claims. Initial `pending_client_validation` is not an outage. If client semantic assessment cannot be performed, report `validation_unavailable` and decline claims requiring it. Packet fields and MCP tool/initialization instructions communicate this contract; enforcement remains client-instruction-driven, not a server-controlled answer-release gate.
 
 The one-rescue constraint is enforced for each packet lineage. A client must not manufacture new initial packets to evade the per-question policy. Packet cache entries can expire after128 entries or a server restart; rescue continuity is not durable storage. E IDs are local to one packet; stable chunk and document IDs support later checks.
 

@@ -152,12 +152,20 @@ class Retriever:
             mapping = []
             for obligation, lane in zip(obligations, lanes):
                 keys = {i['chunk_id'] for i in lane}
-                mapping.append({'obligation': obligation, 'status': 'validation_unavailable',
+                mapping.append({'obligation_index': len(mapping) + 1,
+                    'obligation': obligation, 'status': 'pending_client_validation',
                     'candidate_evidence_ids': [p['evidence_id'] for p in selected if p['chunk_id'] in keys]})
-            packet = {'packet_id': uuid.uuid4().hex, 'question': question, 'obligations': mapping,
+            packet = {'schema_version': 'giis.evidence_packet.v2',
+                'packet_id': uuid.uuid4().hex, 'question': question, 'obligations': mapping,
                 'evidence': selected, 'rescue_count': rescue_count, 'corpus_version': self.active['corpus_version'],
                 'context_tokens': tokens, 'token_encoding': self.cfg['context_token_encoding'],
                 'decoder_exact_token_count': False, 'semantic_validation_required': True,
+                'semantic_validation_owner': 'codex_client',
+                'semantic_validation_status': 'pending_client_validation',
+                'semantic_validation_performed': False,
+                'coverage_record_required': True,
+                'answer_policy': 'mcp_evidence_only',
+                'connection_policy': 'refuse_substantive_answer_if_mcp_unavailable',
                 'planning_status': 'client_planned' if obligations else 'preliminary_search',
                 'reranker': 'cross-encoder/ms-marco-MiniLM-L-6-v2'}
             self.packets[packet['packet_id']] = packet

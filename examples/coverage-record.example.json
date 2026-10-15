@@ -1,0 +1,29 @@
+{
+  "example_only": true,
+  "packet_id": "EXAMPLE_PACKET_NOT_A_REAL_QUERY",
+  "corpus_version": "EXAMPLE_CORPUS",
+  "semantic_validation_owner": "codex_client",
+  "client_review_status": "completed",
+  "obligations": [
+    {
+      "obligation_index": 1,
+      "obligation": "Explain the mechanism requested by the user.",
+      "evidence_ids": ["E1"],
+      "chunk_ids": ["EXAMPLE_CHUNK_NOT_CORPUS_DATA"],
+      "evidence_status": "covered",
+      "justification": "In a real record, summarize the exact passage support and its scope.",
+      "remaining_gaps": [],
+      "answer_status": "answered"
+    },
+    {
+      "obligation_index": 2,
+      "obligation": "Provide the requested local measurement.",
+      "evidence_ids": [],
+      "chunk_ids": [],
+      "evidence_status": "uncovered",
+      "justification": "The reviewed passages do not supply the requested local measurement.",
+      "remaining_gaps": ["Requested measurement absent from selected evidence."],
+      "answer_status": "limitation_reported"
+    }
+  ]
+}

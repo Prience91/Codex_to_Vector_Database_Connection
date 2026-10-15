@@ -83,6 +83,8 @@ Optionally call `fetch_passage` for one returned chunk and verify its text and s
 
 Make the user's local writing folder the primary project folder and use its reusable `AGENTS.md`. That file governs obligation planning, evidence validation, one bounded rescue, local Markdown/Obsidian writing, and APA 7 references. If it is missing, report that the connection works but the local research-writing instructions still need to be supplied. Do not invent a replacement policy or grant server-folder write access.
 
+Use the current template's MCP-only answer rule: Codex must refuse substantive research answers if live MCP access for the current question cannot be established. Never answer from remembered knowledge, cached reports, prior chat passages or alternate searches to bypass an outage. The calling Codex model must semantically verify every obligation, convert the initial `pending_client_validation` handoff into a separate final support/gap record, and check answer completion. A connection test is not a semantic review. Legacy initial `validation_unavailable` labels still require this client assessment; do not describe them as an automatic reviewer failure. Ask users with older local copies to update their `AGENTS.md`, preserving deliberate local customizations.
+
 Direct attachment of the company GIIS_RAG folder is optional for research via MCP. Do not add it automatically. No server files need to be writable by the client's research agent.
 
 ## What persists and what does not

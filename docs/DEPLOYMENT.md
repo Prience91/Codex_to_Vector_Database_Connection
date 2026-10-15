@@ -27,3 +27,13 @@ All users have the same corpus view through this service. It does not implement 
 ## Updating
 
 Review and test code changes in this repository first. Deploy source updates only with operator authorization, preserving existing package data and binding. Take required provenance/backups before approved replacements. Never rebuild or delete the index as part of client onboarding. Keep private hostnames, addresses, usernames, connection manifests and generated evidence outside Git.
+
+For the semantic-handoff amendment, update `server/retriever.py` and `server/mcp_server.py`, and install `server/AGENTS.server.md` as the dedicated package root `AGENTS.md`. Preserve any unrelated live-code changes instead of replacing them blindly. Back up the previous versions inside the dedicated folder. Restart the dedicated MCP process in a controlled operator step so Python loads the changes; existing in-memory packets are lost. Reconnect/restart client MCP sessions to refresh initialization instructions. Verify a new obligation packet declares `pending_client_validation`, `semantic_validation_owner=codex_client`, `semantic_validation_performed=false`, and `answer_policy=mcp_evidence_only`. Replace the separate local writing-folder `AGENTS.md` from the updated workspace template; the server file does not automatically update users' vaults.
+
+The client test can exercise this handoff without claiming semantic approval:
+
+```powershell
+./client/Test-GiisMcp.ps1 -Query 'How does climate change affect biodiversity?' -Obligations @('Explain observed range shifts.', 'Explain constraints on species adaptation.')
+```
+
+It verifies that the server returns one pending review entry per requested obligation and identifies Codex as reviewer. The calling Codex model must still actually read and assess the returned passages.

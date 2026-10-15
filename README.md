@@ -73,6 +73,8 @@ The service listens on **127.0.0.1:8765/mcp**. SSH carries the connection to eac
 
 Read [the full protocol](docs/OBLIGATION_EVIDENCE_PROTOCOL.md). The client performs semantic planning and judgment; the server performs embedding, hybrid search, ranking and bounded selection. Model choice can affect those judgments, and instructions do not guarantee every model will apply them correctly.
 
+**Codex must use live GIIS MCP evidence for substantive research answers. If the connection cannot be established, it must refuse that answer rather than substitute model memory, cached notes or web search.** The server returns `pending_client_validation`; Codex must verify each obligation and produce its support/gap record before releasing an answer. `validation_unavailable` is reserved for a client assessment that actually could not be performed. The raw server packet remains unchanged; client review is a separate record.
+
 ## Validation and current limits
 
 The founding deployment's CPU smoke test accessed **1,419,435 chunks**, returned 9 passages, and used **3.67 GiB peak process memory**, with initialization plus the query taking **15.6 seconds**. Live Codex testing also exercised obligation retrieval and exact passage fetching. These are observations from one deployment, not a benchmark of arbitrary indexes or many concurrent users.
