@@ -25,7 +25,9 @@ These tests establish basic usability of that existing deployed connection. They
 
 ### Semantic handoff contract: 15 October 2026
 
-The packet contract now labels unassessed evidence `pending_client_validation`, identifies `codex_client` as the reviewer, and states that server semantic validation has not been performed. The client must record final obligation support/gaps and refuse substantive research answers if MCP access cannot be established. Synthetic tests cover these fields in obligation packets, preliminary searches and empty-result bundles. These tests verify the handoff and instruction contract, not the semantic correctness or compliance of an external Codex model. Deployment requires an operator restart and a new live packet check; source-file installation alone does not prove the running process uses the new contract.
+The packet contract now labels unassessed evidence `pending_client_validation`, identifies `codex_client` as the reviewer, and states that server semantic validation has not been performed. The client must record final obligation support/gaps and refuse substantive research answers if MCP access cannot be established. Synthetic tests cover these fields in obligation packets, preliminary searches and empty-result bundles. These tests verify the handoff and instruction contract, not the semantic correctness or compliance of an external Codex model.
+
+The company deployment was updated with in-folder backups and restarted in its dedicated tmux session. A fresh live request with two explicit obligations returned twelve passages and confirmed `semantic_validation_owner=codex_client`, `semantic_validation_status=pending_client_validation`, and `answer_policy=mcp_evidence_only`, with one pending entry for each obligation. The helper passed the MCP handshake and tool checks. This verifies that the running service loaded the amended contract; it does not claim semantic coverage approval. Users must separately replace their local writing-folder `AGENTS.md` and refresh their Codex MCP session to load current instructions.
 
 ### Connection recovery: 14 October 2026
 
